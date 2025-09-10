@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speaky - Speech to Text</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-microphone-alt"></i>
+                <h1>Speaky</h1>
+            </div>
+            <div class="subtitle">Speech-to-Text for Writers</div>
+        </div>
+        
+        <div class="mic-section">
+            <button class="mic-button" id="micBtn">
+                <i class="fas fa-microphone" id="micIcon"></i>
+            </button>
+            
+            <div class="status" id="status">Click to start recording</div>
+            
+            <div class="language-select">
+                <select id="language">
+                    <option value="en-US">English (US)</option>
+                    <option value="en-GB">English (UK)</option>
+                    <option value="es-ES">Spanish</option>
+                    <option value="fr-FR">French</option>
+                    <option value="de-DE">German</option>
+                    <option value="it-IT">Italian</option>
+                    <option value="pt-BR">Portuguese</option>
+                    <option value="ja-JP">Japanese</option>
+                    <option value="ko-KR">Korean</option>
+                    <option value="zh-CN">Chinese</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="transcription" id="transcription" contenteditable="true">
+            <div class="placeholder">
+                <i class="fas fa-comment-dots"></i>
+                <p>Your transcribed text will appear here</p>
+                <small>Click the microphone and start speaking, or click here to edit manually</small>
+            </div>
+        </div>
+        
+        <div class="actions-section">
+            <div class="section-title">Basic Actions</div>
+            <div class="actions-row">
+                <button class="btn" id="copyBtn">
+                    <i class="fas fa-copy"></i> Copy Text
+                </button>
+                <button class="btn btn-warning" id="clearBtn">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+                <button class="btn" id="voiceCommandsBtn">
+                    <i class="fas fa-microphone-alt"></i> Voice Commands
+                </button>
+                <button class="btn" id="autoPunctuationBtn">
+                    <i class="fas fa-pen-alt"></i> Auto-Punctuation
+                </button>
+                <button class="btn" id="aipowerBtn">
+                    <i class="fas fa-microphone-alt"> AI</i>
+
+                </button>
+            </div>
+        </div>
+        <div class="actions-section">
+    
+
+        
+        <div class="actions-section">
+            <div class="section-title">Export & Save</div>
+            <div class="actions-row">
+                <button class="btn btn-primary" id="saveBtn">
+                    <i class="fas fa-download"></i> Save TXT
+                </button>
+                <button class="btn btn-secondary" id="exportDocBtn">
+                    <i class="fas fa-file-word"></i> Export DOC
+                </button>
+                <button class="btn btn-secondary" id="exportPdfBtn">
+                    <i class="fas fa-file-pdf"></i> Export PDF
+                </button>
+            </div>
+        </div>
+        
+        <div class="actions-section">
+            <div class="section-title">Share to Platforms</div>
+            <div class="actions-row">
+                <button class="btn" id="shareWhatsAppBtn">
+                    <i class="fab fa-whatsapp"></i> WhatsApp
+                </button>
+                <button class="btn" id="shareTelegramBtn">
+                    <i class="fab fa-telegram"></i> Telegram
+                </button>
+                <button class="btn" id="shareDiscordBtn">
+                    <i class="fab fa-discord"></i> Discord
+                </button>
+                <button class="btn" id="shareEmailBtn">
+                    <i class="fas fa-envelope"></i> Email
+                </button>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value" id="wordCount">0</div>
+                <div class="stat-label">Words</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="charCount">0</div>
+                <div class="stat-label">Characters</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="timeCount">00:00</div>
+                <div class="stat-label">Time</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
