@@ -600,47 +600,49 @@ class Speaky {
     }
     
     async correctWithAI() {
-        if (!this.transcriptText.trim()) return;
-        
-        try {
-            this.updateStatus('AI correcting...');
-            
-            const response = await fetch('/.netlify/functions/ai-correct', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    text: this.transcriptText,
-                    preset: 'standard',
-                    options: {
-                        preserveFormatting: true
-                    }
-                })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-            
-            const data = await response.json();
-            
-            if (data.corrected_text && data.corrected_text !== this.transcriptText) {
-                this.transcriptText = data.corrected_text;
-                this.updateTranscriptDisplay();
-                this.showNotification('Text corrected by AI', 'success');
-            }
-            
-        } catch (error) {
-            console.error('AI correction failed:', error);
-            this.showNotification('AI correction unavailable', 'warning');
-        } finally {
-            if (!this.isRecording) {
-                this.updateStatus('Ready');
-            }
+    if (!this.transcriptText.trim()) return;
+
+    try {
+        this.updateStatus('AI correcting...');
+
+        const response = await fetch('/.netlify/functions/ai-correct', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                text: this.transcriptText,
+                preset: 'speaky',
+                options: {
+                    preserveFormatting: true,
+                    handleRepetitions: true,
+                    improveReadability: true
+                }
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+
+        if (data.corrected_text && data.corrected_text !== this.transcriptText) {
+            this.transcriptText = data.corrected_text;
+            this.updateTranscriptDisplay();
+            this.showNotification('Transcript corrected by AI', 'success');
+        }
+
+    } catch (error) {
+        console.error('AI correction failed:', error);
+        this.showNotification('AI correction unavailable', 'warning');
+    } finally {
+        if (!this.isRecording) {
+            this.updateStatus('Ready');
         }
     }
-    
+}
+
     // Utility methods
     async copyText() {
         const text = this.getTranscriptText();
@@ -1148,7 +1150,7 @@ class VoiceCommandProcessor {
         this.commandHistory = [];
         this.undoStack = [];
         this.maxUndoSteps = 20;
-        
+
         this.abbreviations = [
             'e.g.', 'i.e.', 'Mr.', 'Mrs.', 'Dr.', 'Ms.', 'Prof.', 'Jr.', 'Sr.',
             'vs.', 'etc.', 'Inc.', 'Corp.', 'Ltd.', 'Co.', 'Ave.', 'St.', 'Rd.',
@@ -1169,29 +1171,37 @@ class VoiceCommandProcessor {
 
     processVoiceCommands(text) {
         if (!this.voiceCommands) return text;
-        
+
         const commands = {
             'period': '.', 'full stop': '.', 'comma': ',', 'question mark': '?',
             'exclamation mark': '!', 'colon': ':', 'semicolon': ';', 'dash': '-',
             'new line': '\n', 'new paragraph': '\n\n', 'quote': '"'
         };
-        
+
         let processedText = text;
+
         for (const [command, replacement] of Object.entries(commands)) {
             const regex = new RegExp(`\\b${this.escapeRegex(command)}\\b`, 'gi');
             processedText = processedText.replace(regex, replacement);
         }
-        
+
+        // Replace number words with digits
+        processedText = processedText.replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety|hundred|thousand)\b/gi, (match) => {
+            return this.numberWords[match.toLowerCase()] || match;
+        });
+
         return processedText;
     }
 
     applyAutoPunctuation(text) {
         if (!this.autoPunctuation) return text;
 
+        // Capitalize 'I' and first letter of text
         text = text.replace(/\bi\b/g, 'I');
         text = text.replace(/\s+/g, ' ').trim();
         text = text.replace(/^(\s*["'(\[]*\s*)(\w)/, (match, p1, p2) => p1 + p2.toUpperCase());
-        
+
+        // Add ending punctuation if missing
         if (!text.match(/[.!?]$/)) {
             if (text.match(/\b(what|how|when|where|who|why|which|whose)\b/i)) {
                 text += '?';
@@ -1199,12 +1209,12 @@ class VoiceCommandProcessor {
                 text += '.';
             }
         }
-        
+
         return text;
     }
 
     escapeRegex(string) {
-        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\                <div class');
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 }
 
